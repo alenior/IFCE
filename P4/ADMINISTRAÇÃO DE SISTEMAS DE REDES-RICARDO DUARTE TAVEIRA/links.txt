@@ -1,0 +1,8 @@
+Configurando o contêiner Mosquitto MQTT Docker para uso com Home Assistant:
+
+https://www.homeautomationguy.io/blog/docker-tips/configuring-the-mosquitto-mqtt-docker-container-for-use-with-home-assistant
+
+Instalação Docker, Home Assistant e Portainer no Ubuntu Linux:
+
+https://www.homeautomationguy.io/blog/home-assistant-tips/installing-docker-home-assistant-and-portainer-on-ubuntu-linux
+
