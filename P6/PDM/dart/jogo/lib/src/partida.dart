@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:jogo/src/resultado.dart';
 
 const pedra = 'Pedra';
 const papel = 'Papel';

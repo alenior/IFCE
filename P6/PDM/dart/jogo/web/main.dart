@@ -10,12 +10,13 @@ late Resultado resultado;
 void main() {
   inicializarReferencias();
   final partida = configurarPartida();
+
   for (final opcao in opcoes) {
     divOpcoes.append(
       ImageButtonInputElement()
         ..className = 'opcao'
         ..src = 'images/$opcao.png'
-        ..height = 120,
+        ..height = 120
         ..onClick.listen(
           (MouseEvent e) {
             if (jogando) {
@@ -26,7 +27,7 @@ void main() {
           },
         )
     ); 
-    }
+  }
 }
 
 Partida configurarPartida() {
@@ -81,4 +82,13 @@ void mostrarResultado(Resultado resultado) {
       ..className = classeCss
       ..text = mensagem,
   );
+}
+
+void adicionarEspaco() {
+  divResultado.append(BRElement());
+  divResultado.append(BRElement());
+}
+void jogarNovamente(MouseEvent e) {
+  jogando = true;
+  divResultado.children.clear();
 }
