@@ -1,3 +1,5 @@
+import 'dart:math';
+
 const pedra = 'Pedra';
 const papel = 'Papel';
 const tesoura = 'Tesoura';
@@ -14,5 +16,27 @@ class Partida {
       regras[vencedor] = {};
     }
     regras[vencedor]![acao] = perdedor;
+  }
+
+  String escolherPc() {
+    final index = Random().nextInt(5);
+    return opcoes[index];
+  }
+
+  Resultado iniciar({required String humano}) {
+    final pc = escolherPc();
+    if (humano == pc) {
+      return Resultado(ResultadoType.empate, '$humano empata com $pc');
+    }
+
+    if (regras[humano]!.containsValue(pc)) {
+      final entry = regras[humano]!.entries.firstWhere((e) => e.value == pc);
+      return Resultado(
+        ResultadoType.vitoria, '$humano ${entry.key} ${entry.value}');
+    }
+
+    final entry = regras[pc]!.entries.firstWhere((e) => e.value == humano);
+      return Resultado(
+        ResultadoType.derrota, '$pc ${entry.key} ${entry.value}');
   }
 }
