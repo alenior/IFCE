@@ -124,7 +124,7 @@ void main() {
   print(resposta); // > 42
 
   StringBuffer? frase1 = null;
-  frase?..write('Operação ')
+  frase..write('Operação ')
     ..write('em ')
     ..write('cascade.');
   print(frase1); // > null
