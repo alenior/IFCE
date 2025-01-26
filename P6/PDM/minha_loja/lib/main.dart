@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'clients_page.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +38,22 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          Container(
+             padding: const EdgeInsets.only(right: 50), // Afasta da margem direita
+            child: IconButton(
+              icon: Icon(Icons.people),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ClientesPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
