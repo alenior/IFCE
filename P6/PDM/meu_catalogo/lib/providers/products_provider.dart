@@ -5,7 +5,7 @@ class ProductsProvider with ChangeNotifier {
   final List<Product> _products = [
     Product(
       code: 'P001',
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl: 'build/flutter_assets/images/produto1.jpeg',
       name: 'Produto 1',
       description: 'Descrição do Produto 1',
       price: 50.0,

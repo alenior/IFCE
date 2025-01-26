@@ -4,6 +4,8 @@ import '../providers/orders_provider.dart';
 import '../widgets/order_item.dart';
 
 class OrdersScreen extends StatelessWidget {
+  const OrdersScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ordersData = Provider.of<OrdersProvider>(context);

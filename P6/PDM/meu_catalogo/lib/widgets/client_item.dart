@@ -4,7 +4,7 @@ import '../models/client.dart';
 class ClientItem extends StatelessWidget {
   final Client client;
 
-  ClientItem({required this.client});
+  const ClientItem({super.key, required this.client});
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,8 @@ import '../providers/clients_provider.dart';
 import '../widgets/client_item.dart';
 
 class ClientsScreen extends StatelessWidget {
+  const ClientsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final clientsData = Provider.of<ClientsProvider>(context);
