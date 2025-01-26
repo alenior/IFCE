@@ -39,7 +39,11 @@ class ClientesPage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.person, size: 50),
+                    Image.network(
+                      'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/homerSimpson.webp',
+                      width: 150,
+                      height: 150,
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -52,6 +56,142 @@ class ClientesPage extends StatelessWidget {
                           Text('CPF: 123.456.789-00'),
                           Text('Telefone: (11) 91234-5678'),
                           Text('Email: homer@email.com'),
+                          Text('Endereço: Evergreen Terrace, 742'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(16), // Margem externa
+                padding: const EdgeInsets.all(8), // Espaçamento interno
+                decoration: BoxDecoration(
+                  color: Colors.white, // Cor de fundo
+                  border: Border.all(color: Colors.black, width: 2), // Borda
+                  borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+                ),
+                child: Row(
+                  children: [
+                    Image.network(
+                      'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/margeSimpson.webp',
+                      width: 150,
+                      height: 150,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nome: Marge Simpson',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('CPF: 123.456.789-11'),
+                          Text('Telefone: (11) 91234-5678'),
+                          Text('Email: marge@email.com'),
+                          Text('Endereço: Evergreen Terrace, 742'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(16), // Margem externa
+                padding: const EdgeInsets.all(8), // Espaçamento interno
+                decoration: BoxDecoration(
+                  color: Colors.white, // Cor de fundo
+                  border: Border.all(color: Colors.black, width: 2), // Borda
+                  borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+                ),
+                child: Row(
+                  children: [
+                    Image.network(
+                      'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/bartSimpson.webp',
+                      width: 150,
+                      height: 150,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nome: Bart Simpson',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('CPF: 123.456.789-22'),
+                          Text('Telefone: (11) 91234-5678'),
+                          Text('Email: bart@email.com'),
+                          Text('Endereço: Evergreen Terrace, 742'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(16), // Margem externa
+                padding: const EdgeInsets.all(8), // Espaçamento interno
+                decoration: BoxDecoration(
+                  color: Colors.white, // Cor de fundo
+                  border: Border.all(color: Colors.black, width: 2), // Borda
+                  borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+                ),
+                child: Row(
+                  children: [
+                    Image.network(
+                      'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/lisaSimpson.webp',
+                      width: 150,
+                      height: 150,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nome: Lisa Simpson',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('CPF: 123.456.789-33'),
+                          Text('Telefone: (11) 91234-5678'),
+                          Text('Email: lisa@email.com'),
+                          Text('Endereço: Evergreen Terrace, 742'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(16), // Margem externa
+                padding: const EdgeInsets.all(8), // Espaçamento interno
+                decoration: BoxDecoration(
+                  color: Colors.white, // Cor de fundo
+                  border: Border.all(color: Colors.black, width: 2), // Borda
+                  borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+                ),
+                child: Row(
+                  children: [
+                    Image.network(
+                      'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/megSimpson.webp',
+                      width: 150,
+                      height: 150,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nome: Meg Simpson',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('CPF: 123.456.789-44'),
+                          Text('Telefone: (11) 91234-5678'),
+                          Text('Email: meg@email.com'),
                           Text('Endereço: Evergreen Terrace, 742'),
                         ],
                       ),
