@@ -42,38 +42,163 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Row(
-              children: [
-                Image.network(
-                  'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/esp32.webp',
-                  width: 150,
-                  height: 150,
+            Container(
+              margin: EdgeInsets.all(10), // Margem externa
+              child: Text.rich(
+                textAlign: TextAlign.center,
+                TextSpan(
+                  text: 'PRODUTOS',
+                  style: TextStyle(fontWeight: FontWeight.bold,
+                    fontSize: 25
+                  ),
                 ),
-                Text('Esp32'),
-                Text('Microcontrolador poderoso com acesso à internet via wifi.'),
-              ],
+              ),
             ),
-            Row(
-              children: [
-                Image.network(
-                  'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/protoboard830.webp',
-                  width: 150,
-                  height: 150,
-                ),
-                Text('Protoboard'),
-                Text('Matriz de 830 furos para conexão de condutores sem necessitar soldar.'),
-              ],
+            Container(
+              margin: EdgeInsets.all(16), // Margem externa
+              padding: EdgeInsets.all(8), // Espaçamento interno
+              decoration: BoxDecoration(
+                color: Colors.white, // Cor de fundo
+                border: Border.all(color: Colors.black, width: 2), // Borda
+                borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+              ),
+              child: Row(
+                children: [
+                  Image.network(
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/esp32.webp',
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: Text.rich(
+                      textAlign: TextAlign.center,
+                      TextSpan(
+                        text: 'Esp32',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        
+                      ),
+                    ),
+                  ),
+                  Text('Microcontrolador poderoso com acesso à internet via wifi.'),
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Image.network(
-              'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/fonte5v.webp',
+            Container(
+              margin: EdgeInsets.all(16), // Margem externa
+              padding: EdgeInsets.all(8), // Espaçamento interno
+              decoration: BoxDecoration(
+                color: Colors.white, // Cor de fundo
+                border: Border.all(color: Colors.black, width: 2), // Borda
+                borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+              ),
+              child: Row(
+                children: [
+                  Image.network(
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/protoboard830.webp',
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: Text.rich(
+                      textAlign: TextAlign.center,
+                      TextSpan(
+                        text: 'Protoboard',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Text('Matriz de 830 furos para conexão de condutores sem necessitar soldar.'),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(16), // Margem externa
+              padding: EdgeInsets.all(8), // Espaçamento interno
+              decoration: BoxDecoration(
+                color: Colors.white, // Cor de fundo
+                border: Border.all(color: Colors.black, width: 2), // Borda
+                borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+              ),
+              child: Row(
+                children: [
+                  Image.network(
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/fonte5v.webp',
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: Text.rich(
+                      textAlign: TextAlign.center,
+                      TextSpan(
+                        text: 'Fonte 5v',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Text('Fonte de tensão 5v e 3v3 por pinos e USB.'),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(16), // Margem externa
+              padding: EdgeInsets.all(8), // Espaçamento interno
+              decoration: BoxDecoration(
+                color: Colors.white, // Cor de fundo
+                border: Border.all(color: Colors.black, width: 2), // Borda
+                borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+              ),
+              child: Row(
+                children: [
+                  Image.network(
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/ledVermelho.webp',
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: Text.rich(
+                      textAlign: TextAlign.center,
+                      TextSpan(
+                        text: 'Led vermelho',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Text('Led vermelho difuso de 5mm ideal para prototipagem.'),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(16), // Margem externa
+              padding: EdgeInsets.all(8), // Espaçamento interno
+              decoration: BoxDecoration(
+                color: Colors.white, // Cor de fundo
+                border: Border.all(color: Colors.black, width: 2), // Borda
+                borderRadius: BorderRadius.circular(10), // Bordas arredondadas
+              ),
+              child: Row(
+                children: [
+                  Image.network(
+                  'https://github.com/alenior/IFCE/blob/main/P6/PDM/minha_loja/lib/media/ledVerde.jpeg?raw=true',
                   width: 150,
                   height: 150,
-                ),
-                Text('Fonte 5v'),
-                Text('Fonte de tensão 5v e 3v3 por pinos e USB.'),
-              ],
+                  ),
+                  SizedBox(
+                    width: 150,
+                    child: Text.rich(
+                      textAlign: TextAlign.center,
+                      TextSpan(
+                        text: 'Led verde',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Text('Led verde difuso de 5mm ideal para prototipagem.'),
+                ],
+              ),
             ),
           ],
         ),
