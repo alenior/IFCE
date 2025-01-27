@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'clients_page.dart';
+import 'pedidos_page.dart';
 
 
 void main() {
@@ -41,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           Container(
              padding: const EdgeInsets.only(right: 50), // Afasta da margem direita
-            child: IconButton(
+             child: IconButton(
               icon: Icon(Icons.people),
               onPressed: () {
                 Navigator.push(
@@ -49,6 +50,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   MaterialPageRoute(
                     builder: (context) => ClientesPage(),
                   ),
+                );
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(right: 50), // Afasta da margem direita
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),  // Ícone de carrinho de compras
+              onPressed: () {
+                // Navega para a tela de pedidos
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PedidosPage()),  // Redireciona para a página Pedidos
                 );
               },
             ),

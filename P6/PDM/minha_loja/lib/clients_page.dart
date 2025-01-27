@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'pedidos_page.dart';
 
 class ClientesPage extends StatelessWidget {
   const ClientesPage({Key? key}) : super(key: key);
@@ -9,6 +10,21 @@ class ClientesPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Clientes Cadastrados'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          Container(
+            padding: const EdgeInsets.only(right: 50), // Afasta da margem direita
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),  // Ícone de carrinho de compras
+              onPressed: () {
+                // Navega para a tela de pedidos
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PedidosPage()),  // Redireciona para a página Pedidos
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
