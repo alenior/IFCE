@@ -118,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text.rich(
                         textAlign: TextAlign.center,
                         TextSpan(
-                          text: 'Microcontrolador poderoso com acesso à internet via wifi.',
+                          text:
+                              'Microcontrolador poderoso com acesso à internet via wifi.',
                         ),
                       ),
                     ),
@@ -167,7 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text.rich(
                         textAlign: TextAlign.center,
                         TextSpan(
-                          text: 'Matriz de 830 furos para conexão de condutores sem necessitar soldar.',
+                          text:
+                              'Matriz de 830 furos para conexão de condutores sem necessitar soldar.',
                         ),
                       ),
                     ),
@@ -265,7 +267,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text.rich(
                         textAlign: TextAlign.center,
                         TextSpan(
-                          text: 'Led vermelho difuso de 5mm ideal para prototipagem.',
+                          text:
+                              'Led vermelho difuso de 5mm ideal para prototipagem.',
                         ),
                       ),
                     ),
@@ -314,7 +317,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Text.rich(
                         textAlign: TextAlign.center,
                         TextSpan(
-                          text: 'Led verde difuso de 5mm ideal para prototipagem.',
+                          text:
+                              'Led verde difuso de 5mm ideal para prototipagem.',
                         ),
                       ),
                     ),
