@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'clients_page.dart';
 
 class PedidosPage extends StatelessWidget {
-  const PedidosPage({Key? key}) : super(key: key);
+  const PedidosPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,15 +12,15 @@ class PedidosPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           Container(
-            padding: const EdgeInsets.only(right: 50), // Afasta da margem direita
+            padding: const EdgeInsets.only(
+              right: 50,
+            ), // Afasta da margem direita
             child: IconButton(
               icon: Icon(Icons.people),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ClientesPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => ClientesPage()),
                 );
               },
             ),
@@ -38,37 +38,9 @@ class PedidosPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   TextSpan(
                     text: 'PEDIDOS',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   ),
                 ),
-              ),
-              // Lista de pedidos (mock ou banco de dados)
-              PedidoItem(
-                produto: 'Esp32',
-                cliente: 'Homer Simpson',
-                quantidade: 2,
-                status: 'Pendente',
-              ),
-              PedidoItem(
-                produto: 'Fonte 5v',
-                cliente: 'Marge Simpson',
-                quantidade: 1,
-                status: 'Concluído',
-              ),
-              PedidoItem(
-                produto: 'Protoboard',
-                cliente: 'Bart Simpson',
-                quantidade: 3,
-                status: 'Em andamento',
-              ),
-              PedidoItem(
-                produto: 'Led vermelho',
-                cliente: 'Lisa Simpson',
-                quantidade: 5,
-                status: 'Pendente',
               ),
               // Botão para adicionar pedido
               ElevatedButton(
@@ -76,12 +48,47 @@ class PedidosPage extends StatelessWidget {
                   // Lógica para adicionar novo pedido
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => NovoPedidoPage(),
-                    ),
+                    MaterialPageRoute(builder: (context) => NovoPedidoPage()),
                   );
                 },
                 child: Text('Adicionar Novo Pedido'),
+              ),
+              // Lista de pedidos (mock ou banco de dados)
+              PedidoItem(
+                imagem:
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/esp32.webp',
+                cliente: 'Homer Simpson',
+                produto: 'Esp32',
+                quantidade: 2,
+                preco: 100.00,
+                status: 'Pendente',
+              ),
+              PedidoItem(
+                imagem:
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/fonte5v.webp',
+                cliente: 'Marge Simpson',
+                produto: 'Fonte 5v',
+                quantidade: 1,
+                preco: 15.00,
+                status: 'Concluído',
+              ),
+              PedidoItem(
+                imagem:
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/protoboard830.webp',
+                cliente: 'Bart Simpson',
+                produto: 'Protoboard',
+                quantidade: 3,
+                preco: 30.00,
+                status: 'Em andamento',
+              ),
+              PedidoItem(
+                imagem:
+                    'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/ledVermelho.webp',
+                cliente: 'Lisa Simpson',
+                produto: 'Led vermelho',
+                quantidade: 5,
+                preco: 1.00,
+                status: 'Pendente',
               ),
             ],
           ),
@@ -92,15 +99,20 @@ class PedidosPage extends StatelessWidget {
 }
 
 class PedidoItem extends StatelessWidget {
+  final String imagem;
   final String produto;
   final String cliente;
   final int quantidade;
+  final double preco;
   final String status;
 
-  const PedidoItem({super.key, 
+  const PedidoItem({
+    super.key,
+    required this.imagem,
     required this.produto,
     required this.cliente,
     required this.quantidade,
+    required this.preco,
     required this.status,
   });
 
@@ -116,21 +128,17 @@ class PedidoItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Image.network(
-            'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/esp32.webp',
-            width: 150,
-            height: 150,
-          ),
+          Image.network(imagem, width: 150, height: 150),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Produto: $produto',
+                  'Cliente: $cliente',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('Cliente: $cliente'),
+                Text('Produto: $produto'),
                 Text('Quantidade: $quantidade'),
                 Text('Status: $status'),
               ],
@@ -143,7 +151,7 @@ class PedidoItem extends StatelessWidget {
 }
 
 class NovoPedidoPage extends StatelessWidget {
-  const NovoPedidoPage({Key? key}) : super(key: key);
+  const NovoPedidoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -157,24 +165,23 @@ class NovoPedidoPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Produto'),
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Cliente'),
-              ),
+              TextField(decoration: InputDecoration(labelText: 'Produto')),
+              TextField(decoration: InputDecoration(labelText: 'Cliente')),
               TextField(
                 decoration: InputDecoration(labelText: 'Quantidade'),
                 keyboardType: TextInputType.number,
               ),
               DropdownButton<String>(
                 hint: Text('Status'),
-                items: ['Pendente', 'Em andamento', 'Concluído']
-                    .map((status) => DropdownMenuItem<String>(
-                          value: status,
-                          child: Text(status),
-                        ))
-                    .toList(),
+                items:
+                    ['Pendente', 'Em andamento', 'Concluído']
+                        .map(
+                          (status) => DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          ),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   // Lógica para selecionar status
                 },

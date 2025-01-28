@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'pedidos_page.dart';
 
 class ClientesPage extends StatelessWidget {
-  const ClientesPage({Key? key}) : super(key: key);
+  const ClientesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +43,13 @@ class ClientesPage extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              // Botão para cadastrar novo cliente
+              ElevatedButton(
+                onPressed: () {
+                  _showCadastroDialog(context);
+                },
+                child: Text('Cadastrar Novo Cliente'),
               ),
               // Aqui você pode listar clientes cadastrados (mock ou banco de dados)
               Container(
@@ -214,13 +221,6 @@ class ClientesPage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              // Botão para cadastrar novo cliente
-              ElevatedButton(
-                onPressed: () {
-                  _showCadastroDialog(context);
-                },
-                child: Text('Cadastrar Novo Cliente'),
               ),
             ],
           ),
