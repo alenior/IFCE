@@ -96,9 +96,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     10,
                   ), // Bordas arredondadas
                 ),
-                child: Row(
+                child: Wrap(
                   children: [
-                    Image.network(
+                    Column(
+                      children: [
+                        Image.network(
                       'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/esp32.webp',
                       width: 150,
                       height: 150,
@@ -133,6 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -146,9 +150,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     10,
                   ), // Bordas arredondadas
                 ),
-                child: Row(
+                child: Wrap(
                   children: [
-                    Image.network(
+                    Column(
+                      children: [
+                        Image.network(
                       'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/protoboard830.webp',
                       width: 150,
                       height: 150,
@@ -183,6 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -196,9 +204,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     10,
                   ), // Bordas arredondadas
                 ),
-                child: Row(
+                child: Wrap(
                   children: [
-                    Image.network(
+                    Column(
+                      children: [
+                        Image.network(
                       'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/fonte5v.webp',
                       width: 150,
                       height: 150,
@@ -232,6 +242,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -245,9 +257,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     10,
                   ), // Bordas arredondadas
                 ),
-                child: Row(
+                child: Wrap(
                   children: [
-                    Image.network(
+                    Column(
+                      children: [
+                        Image.network(
                       'https://raw.githubusercontent.com/alenior/IFCE/refs/heads/main/P6/PDM/minha_loja/lib/media/ledVermelho.webp',
                       width: 150,
                       height: 150,
@@ -282,6 +296,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -295,9 +311,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     10,
                   ), // Bordas arredondadas
                 ),
-                child: Row(
+                child: Wrap(
                   children: [
-                    Image.network(
+                    Column(
+                      children: [
+                        Image.network(
                       'https://github.com/alenior/IFCE/blob/main/P6/PDM/minha_loja/lib/media/ledVerde.jpeg?raw=true',
                       width: 150,
                       height: 150,
@@ -332,6 +350,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
+                      ],
+                    )
                   ],
                 ),
               ),
