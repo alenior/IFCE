@@ -1,0 +1,28 @@
+
+ROM used: 78 (2%)
+          78 (2%) including unused fragments
+
+          0 Average locations per line
+          8 Average locations per statement
+
+RAM used: 6 (3%) at main() level
+          7 (4%) worst case
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+   19    10 100  C:\PICC\alunosmatinscastro\27fev2023.c
+  277     0   0  C:\PICC\alunosmatinscastro\16F874.h
+----- -----
+  592    20 Total
+
+Page ROM  %  RAM  Functions:
+---- --- --- ---  ----------
+0     12  15   1  @delay_ms1
+0     62  79   1  main
+
+ Segment   Used  Free
+---------  ----  ----
+00000-00003     4  0
+00004-007FF    74  1970
+00800-00FFF     0  2048
+

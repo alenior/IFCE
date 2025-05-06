@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.ccs.MPLABXplug">
+    <module_version install_time="1355179518834" last="true" origin="installer" specification_version="1.46">
+        <file crc="4171148347" name="config/Modules/org-ccs-MPLABXplug.xml"/>
+        <file crc="2903862439" name="modules/docs/org-ccs-MPLABXplug.jar"/>
+        <file crc="2289256229" name="modules/org-ccs-MPLABXplug.jar"/>
+    </module_version>
+</module>

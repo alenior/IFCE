@@ -1,0 +1,115 @@
+CCS PCM C Compiler, Version 3.203, 16465
+
+               Filename: C:\PICC\alunosmatinscastro\27fev2023.LST
+
+               ROM used: 78 words (2%)
+                         Largest free fragment is 2048
+               RAM used: 6 (3%) at main() level
+                         7 (4%) worst case
+               Stack:    1 locations
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   010
+0003:  NOP
+....................  #include "16F874.h" 
+....................  //////// Standard Header file for the PIC16F874 device ////////////////  
+.................... #device PIC16F874  
+.................... #list  
+....................  
+....................   
+.................... #use delay(clock=1000000)  
+0004:  MOVLW  27
+0005:  MOVWF  04
+0006:  MOVF   00,W
+0007:  BTFSC  03.2
+0008:  GOTO   00F
+0009:  MOVLW  52
+000A:  MOVWF  20
+000B:  DECFSZ 20,F
+000C:  GOTO   00B
+000D:  DECFSZ 00,F
+000E:  GOTO   009
+000F:  RETLW  00
+.................... #fuses XT,NOWDT,NOPUT  
+....................   
+.................... void main(){  
+....................    while(TRUE){  
+0010:  CLRF   04
+0011:  MOVLW  1F
+0012:  ANDWF  03,F
+0013:  BSF    03.5
+0014:  BSF    1F.0
+0015:  BSF    1F.1
+0016:  BSF    1F.2
+0017:  BCF    1F.3
+....................      
+....................    output_d(0b00100001);  
+0018:  MOVLW  00
+0019:  MOVWF  08
+001A:  MOVLW  21
+001B:  BCF    03.5
+001C:  MOVWF  08
+....................    delay_ms(15000);  
+001D:  MOVLW  3C
+001E:  MOVWF  26
+001F:  MOVLW  FA
+0020:  MOVWF  27
+0021:  CALL   004
+0022:  DECFSZ 26,F
+0023:  GOTO   01F
+....................    output_d(0b00010001);  
+0024:  MOVLW  00
+0025:  BSF    03.5
+0026:  MOVWF  08
+0027:  MOVLW  11
+0028:  BCF    03.5
+0029:  MOVWF  08
+....................    delay_ms(2000);  
+002A:  MOVLW  08
+002B:  MOVWF  26
+002C:  MOVLW  FA
+002D:  MOVWF  27
+002E:  CALL   004
+002F:  DECFSZ 26,F
+0030:  GOTO   02C
+....................    output_d(0b00001100);  
+0031:  MOVLW  00
+0032:  BSF    03.5
+0033:  MOVWF  08
+0034:  MOVLW  0C
+0035:  BCF    03.5
+0036:  MOVWF  08
+....................    delay_ms(15000);  
+0037:  MOVLW  3C
+0038:  MOVWF  26
+0039:  MOVLW  FA
+003A:  MOVWF  27
+003B:  CALL   004
+003C:  DECFSZ 26,F
+003D:  GOTO   039
+....................    output_d(0b00001010);  
+003E:  MOVLW  00
+003F:  BSF    03.5
+0040:  MOVWF  08
+0041:  MOVLW  0A
+0042:  BCF    03.5
+0043:  MOVWF  08
+....................    delay_ms(2000);  
+0044:  MOVLW  08
+0045:  MOVWF  26
+0046:  MOVLW  FA
+0047:  MOVWF  27
+0048:  CALL   004
+0049:  DECFSZ 26,F
+004A:  GOTO   046
+....................    }  
+004B:  BSF    03.5
+004C:  GOTO   018
+.................... }  
+....................  
+004D:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3FF9   XT NOWDT NOPUT NOPROTECT LVP NOCPD NOWRT BROWNOUT NODEBUG

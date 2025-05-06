@@ -1,0 +1,60 @@
+RTCC Timer 0 overflow (using RTCC name)
+TIMER0 Timer 0 overflow (using TIMER0 name)
+TIMER1 Timer 1 overflow
+TIMER2 Timer 2 overflow
+TIMER3 Timer 3 overflow
+TIMER4 Timer 4 overflow
+EXT  External interrupt
+EXT1 External interrupt #1
+EXT2 External interrupt #2
+EXT3 External interrupt #3
+OSC_FAIL System oscillator failed
+RB0  Port B bit 0 change
+RB1  Port B bit 0 change
+RB2  Port B bit 0 change
+RB3  Port B bit 0 change
+RB4  Port B bit 0 change
+RB5  Port B bit 0 change
+RB6  Port B bit 0 change
+RB7  Port B bit 0 change
+RB   Port B any change on B4-B7
+RC   Port C any change on C4-C7
+T1_CAPT Capture on unit 1
+T1_COMP Compare on unit 1
+T2_CAPT Capture on unit 2
+T2_COMP Compare on unit 2
+AD Analog to digital conversion complete
+ADOF Analog to digital conversion timeout
+TBE RS232 transmit buffer empty
+TBE0 RS232 transmit buffer 0 empty
+TBE1 RS232 transmit buffer 1 empty
+TBE2 RS232 transmit buffer 2 empty
+RDA RS232 receive data available
+RDA0 RS232 receive data available in buffer 0
+RDA1 RS232 receive data available in buffer 1
+RDA2 RS232 receive data available in buffer 2
+CCP1 Capture or Compare on unit 1
+CCP2 Capture or Compare on unit 2
+CCP3 Capture or Compare on unit 3
+CCP4 Capture or Compare on unit 4
+CCP5 Capture or Compare on unit 5
+SSP SPI or I2C activity
+I2C I2C interrupt
+PSP Parallel Slave Port data in
+LCD activity
+LVD Low voltage detected
+COMP Comparator 1 detect
+COMP2 Comparator 2 detect
+BUTTON Pushbutton
+BUSCOL Bus collision
+LOWVOLT Low voltage detected
+EEPROM Write complete
+USB Universal Serial Port
+CANIRX An invalid message has occured on the CAN bus
+CANWAKE Bus Activity wake-up has occured on the CAN bus
+CANERR An error has occured in the CAN module
+CANTX2 CAN Transmit buffer 2 has completed transmission
+CANTX2 CAN Transmit buffer 1 has completed transmission
+CANTX2 CAN Transmit buffer 0 has completed transmission
+CANRX1 CAN Receive buffer 1 has received a new message
+CANRX0 CAN Receive buffer 0 has received a new message

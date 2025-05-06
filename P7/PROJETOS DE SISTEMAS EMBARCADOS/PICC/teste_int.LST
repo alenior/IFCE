@@ -1,0 +1,221 @@
+CCS PCM C Compiler, Version 3.203, 16465
+
+               Filename: C:\PICC\teste_int.LST
+
+               ROM used: 123 words (3%)
+                         Largest free fragment is 2048
+               RAM used: 20 (11%) at main() level
+                         22 (12%) worst case
+               Stack:    2 worst case (0 in main + 2 for interrupts)
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   062
+0003:  NOP
+0004:  MOVWF  7F
+0005:  SWAPF  03,W
+0006:  CLRF   03
+0007:  MOVWF  26
+0008:  MOVF   7F,W
+0009:  MOVWF  25
+000A:  MOVF   0A,W
+000B:  MOVWF  2D
+000C:  CLRF   0A
+000D:  SWAPF  25,F
+000E:  MOVF   04,W
+000F:  MOVWF  27
+0010:  MOVF   20,W
+0011:  MOVWF  28
+0012:  MOVF   21,W
+0013:  MOVWF  29
+0014:  MOVF   22,W
+0015:  MOVWF  2A
+0016:  MOVF   23,W
+0017:  MOVWF  2B
+0018:  MOVF   24,W
+0019:  MOVWF  2C
+001A:  BCF    03.7
+001B:  BCF    03.5
+001C:  BTFSS  0B.3
+001D:  GOTO   020
+001E:  BTFSC  0B.0
+001F:  GOTO   033
+0020:  MOVF   27,W
+0021:  MOVWF  04
+0022:  MOVF   28,W
+0023:  MOVWF  20
+0024:  MOVF   29,W
+0025:  MOVWF  21
+0026:  MOVF   2A,W
+0027:  MOVWF  22
+0028:  MOVF   2B,W
+0029:  MOVWF  23
+002A:  MOVF   2C,W
+002B:  MOVWF  24
+002C:  MOVF   2D,W
+002D:  MOVWF  0A
+002E:  SWAPF  26,W
+002F:  MOVWF  03
+0030:  SWAPF  7F,F
+0031:  SWAPF  7F,W
+0032:  RETFIE
+0033:  BCF    0A.3
+0034:  GOTO   042
+....................  #include "16F874.h"			//Biblioteca do pic utilizado	 
+....................  //////// Standard Header file for the PIC16F874 device ////////////////  
+.................... #device PIC16F874  
+.................... #list  
+....................  
+.................... #use delay(clock=1000000)  
+0035:  MOVLW  35
+0036:  MOVWF  04
+0037:  MOVF   00,W
+0038:  BTFSC  03.2
+0039:  GOTO   040
+003A:  MOVLW  52
+003B:  MOVWF  20
+003C:  DECFSZ 20,F
+003D:  GOTO   03C
+003E:  DECFSZ 00,F
+003F:  GOTO   03A
+0040:  BCF    0A.3
+0041:  GOTO   04F (RETURN)
+.................... #fuses XT,NOWDT,NOPUT  
+....................   
+.................... int X;  
+.................... int conta_A = 0;  
+*
+006A:  BCF    03.5
+006B:  CLRF   2F
+.................... int conta_B = 0;  
+006C:  CLRF   30
+.................... int flag_verde_A = 0;  
+006D:  CLRF   31
+.................... int flag_verde_B = 0;  
+006E:  CLRF   32
+....................   
+.................... #INT_RB  
+.................... void trata_rb(){  
+.................... if(input(PIN_B4==0)){  
+*
+0042:  BTFSS  00.0
+0043:  GOTO   05A
+....................     output_high(PIN_C1);  
+0044:  BCF    33.1
+0045:  MOVF   33,W
+0046:  BSF    03.5
+0047:  MOVWF  07
+0048:  BCF    03.5
+0049:  BSF    07.1
+*
+006F:  MOVLW  FF
+0070:  MOVWF  33
+....................     delay_ms(1000);  
+*
+004A:  MOVLW  04
+004B:  MOVWF  34
+004C:  MOVLW  FA
+004D:  MOVWF  35
+004E:  GOTO   035
+004F:  DECFSZ 34,F
+0050:  GOTO   04C
+....................     output_low(PIN_C1);  
+0051:  BCF    33.1
+0052:  MOVF   33,W
+0053:  BSF    03.5
+0054:  MOVWF  07
+0055:  BCF    03.5
+0056:  BCF    07.1
+.................... 	if(flag_verde_A==1)  
+0057:  DECFSZ 31,W
+0058:  GOTO   05A
+.................... 			conta_A++;}  
+0059:  INCF   2F,F
+.................... if(input(PIN_B5==0)){  
+005A:  BTFSS  00.0
+005B:  GOTO   05F
+.................... 	if(flag_verde_B==1)  
+005C:  DECFSZ 32,W
+005D:  GOTO   05F
+.................... 			conta_B++;}  
+005E:  INCF   30,F
+.................... //input_b();  
+.................... }  
+....................   
+....................   
+.................... /*  
+.................... int compara(int A, int B){  
+.................... 	if(A <= 1.3*B)  
+.................... 	    return 0;  
+.................... 	if((A > 1.3*B) && (A<= 1.6*B))  
+.................... 		return 1;  
+.................... 	if(A > 1.6*B)  
+.................... 		return 2;  
+.................... }*/  
+....................   
+005F:  BCF    0B.0
+0060:  BCF    0A.3
+0061:  GOTO   020
+.................... void main(){  
+....................   
+0062:  CLRF   04
+0063:  MOVLW  1F
+0064:  ANDWF  03,F
+0065:  BSF    03.5
+0066:  BSF    1F.0
+0067:  BSF    1F.1
+0068:  BSF    1F.2
+0069:  BCF    1F.3
+.................... 	enable_interrupts(GLOBAL| INT_RB);		  
+*
+0071:  MOVLW  C8
+0072:  IORWF  0B,F
+....................   
+.................... 	  
+.................... 	while(1){                                            //   D5 D4 D3 D2 D1 D0  
+....................              //CICLO_1      0b00 1  0 0  0  0  1  
+.................... 		output_d(0b00100001);  
+0073:  MOVLW  00
+0074:  BSF    03.5
+0075:  MOVWF  08
+0076:  MOVLW  21
+0077:  BCF    03.5
+0078:  MOVWF  08
+.................... 	/*	flag_verde_A=1;  
+.................... 		delay_ms(15000);  
+.................... 		X=compara(conta_A,conta_B);   
+....................         flag_verde_A=0;  
+.................... 		if(X==0)		  
+.................... 			delay_ms(15000);  
+.................... 		if(X==1)		  
+.................... 			delay_ms(20000);  
+.................... 		if(X==2)		  
+.................... 			delay_ms(25000);  
+.................... 		conta_B=0;  
+.................... 		output_d(0b00010001);  
+.................... 		delay_ms(4000);  
+.................... 		output_d(0b00001100);  
+.................... 		flag_verde_B=1;  
+.................... 		delay_ms(15000);  
+.................... 		X=compara(conta_B,conta_A);   
+....................         flag_verde_B=0;  
+.................... 		if(X==0)		  
+.................... 			delay_ms(10000);  
+.................... 		if(X==1)		  
+.................... 			delay_ms(10000);  
+.................... 		if(X==2)		  
+.................... 			delay_ms(15000);  
+.................... 		conta_A=0;  
+.................... 		output_d(0b00001010);  
+.................... 		delay_ms(4000);*/  
+.................... 	  
+.................... 	}  
+0079:  GOTO   073
+....................   
+.................... }  
+....................  
+007A:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3FF9   XT NOWDT NOPUT NOPROTECT LVP NOCPD NOWRT BROWNOUT NODEBUG
