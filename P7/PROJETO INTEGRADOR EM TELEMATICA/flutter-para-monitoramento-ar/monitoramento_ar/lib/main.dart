@@ -40,11 +40,18 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
     super.initState();
     _dbRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      setState(() {
-        pm1_0 = data?["pm1_0"];
-        pm2_5 = data?["pm2_5"];
-        pm10 = data?["pm10"];
-      });
+
+      final novoPm1 = data?["pm1_0"];
+      final novoPm2 = data?["pm2_5"];
+      final novoPm10 = data?["pm10"];
+
+      if (pm1_0 != novoPm1 || pm2_5 != novoPm2 || pm10 != novoPm10) {
+        setState(() {
+          pm1_0 = novoPm1;
+          pm2_5 = novoPm2;
+          pm10 = novoPm10;
+        });
+      }
     });
   }
 
@@ -63,15 +70,19 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dadosDisponiveis = pm1_0 != null || pm2_5 != null || pm10 != null;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Monitoramento do Ar')),
-      body: ListView(
-        children: [
-          _buildLeitura("PM1.0", pm1_0),
-          _buildLeitura("PM2.5", pm2_5),
-          _buildLeitura("PM10", pm10),
-        ],
-      ),
+      body: dadosDisponiveis
+          ? ListView(
+              children: [
+                _buildLeitura("PM1.0", pm1_0),
+                _buildLeitura("PM2.5", pm2_5),
+                _buildLeitura("PM10", pm10),
+              ],
+            )
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }
