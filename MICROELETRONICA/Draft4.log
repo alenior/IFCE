@@ -1,0 +1,22 @@
+LTspice 24.1.9 for Windows
+Circuit: C:\Users\alenc\Downloads\Draft4.net
+Start Time: Mon Jun 23 16:40:48 2025
+solver = Normal
+Maximum thread count: 4
+tnom = 27
+temp = 27
+method = trap
+WARNING: Node n008 is floating.
+WARNING: Node n009 is floating.
+WARNING: Node n010 is floating.
+WARNING: Node n006 is floating.
+WARNING: Node n005 is floating.
+WARNING: Node n002 is floating.
+
+Direct Newton iteration for .op point succeeded.
+Total elapsed time: 0.345 seconds.
+
+Files loaded:
+C:\Users\alenc\Downloads\Draft4.net
+C:\Users\alenc\AppData\Local\LTspice\lib\cmp\standard.mos
+
