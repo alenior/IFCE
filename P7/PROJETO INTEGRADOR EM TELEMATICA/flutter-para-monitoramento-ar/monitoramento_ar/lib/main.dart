@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -35,9 +36,7 @@ class LeituraSensorPage extends StatefulWidget {
 }
 
 class _LeituraSensorPageState extends State<LeituraSensorPage> {
-  final DatabaseReference _historicoRef = FirebaseDatabase.instance.ref(
-    "historico",
-  );
+  final DatabaseReference _historicoRef = FirebaseDatabase.instance.ref("historico");
 
   int? pm1_0;
   int? pm2_5;
@@ -50,18 +49,22 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
   @override
   void initState() {
     super.initState();
-    _historicoRef.orderByKey().limitToLast(1).onChildAdded.listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      if (data != null) {
-        setState(() {
-          pm1_0 = data['pm1_0'];
-          pm2_5 = data['pm2_5'];
-          pm10 = data['pm10'];
-          latitude = (data['latitude'] ?? 0.0).toDouble();
-          longitude = (data['longitude'] ?? 0.0).toDouble();
-          altitude = (data['altitude'] ?? 0.0).toDouble();
-          datetime = data['datetime_utc'];
-        });
+    _historicoRef.orderByKey().limitToLast(1).onValue.listen((event) {
+      final children = event.snapshot.children;
+      if (children.isNotEmpty) {
+        final lastSnapshot = children.last;
+        final data = lastSnapshot.value as Map<dynamic, dynamic>?;
+        if (data != null) {
+          setState(() {
+            pm1_0 = data['pm1_0'];
+            pm2_5 = data['pm2_5'];
+            pm10 = data['pm10'];
+            latitude = (data['latitude'] ?? 0.0).toDouble();
+            longitude = (data['longitude'] ?? 0.0).toDouble();
+            altitude = (data['altitude'] ?? 0.0).toDouble();
+            datetime = data['datetime_utc'];
+          });
+        }
       }
     });
   }
@@ -77,9 +80,9 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(icon, color: cor, size: 28),
             const SizedBox(width: 12),
@@ -96,10 +99,11 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    valor,
+                  Text.rich(
+                    TextSpan(
+                      text: valor,
+                    ),
                     style: TextStyle(color: cor, fontSize: 14),
-                    softWrap: true,
                   ),
                 ],
               ),
@@ -113,11 +117,7 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
   @override
   Widget build(BuildContext context) {
     final hasData = pm1_0 != null || pm2_5 != null || pm10 != null;
-    final hasFix =
-        latitude != null &&
-        longitude != null &&
-        latitude != 0.0 &&
-        longitude != 0.0;
+    final hasFix = latitude != null && longitude != null && latitude != 0.0 && longitude != 0.0;
     final DateTime? parsedTime = DateTime.tryParse(datetime ?? "");
 
     final pm1Color = _getColorForPM(pm1_0, 0);
@@ -142,23 +142,19 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
               children: [
                 _buildLeitura(
                   "PM1.0",
-                  pm1_0 != null ? "$pm1_0 µg/m³ (Recomendável: 0 µg/m³)" : "--",
+                  pm1_0 != null ? "$pm1_0 µg/m³ (Recomendável: 0 µg/m³)" : "-- (Recomendável: 0 µg/m³)",
                   Icons.blur_on,
                   pm1Color,
                 ),
                 _buildLeitura(
                   "PM2.5",
-                  pm2_5 != null
-                      ? "$pm2_5 µg/m³ (Recomendável: < 15 µg/m³)"
-                      : "--",
+                  pm2_5 != null ? "$pm2_5 µg/m³ (Recomendável: < 15 µg/m³)" : "-- (Recomendável: < 15 µg/m³)",
                   Icons.blur_circular,
                   pm25Color,
                 ),
                 _buildLeitura(
                   "PM10",
-                  pm10 != null
-                      ? "$pm10 µg/m³ (Recomendável: < 50 µg/m³)"
-                      : "--",
+                  pm10 != null ? "$pm10 µg/m³ (Recomendável: < 50 µg/m³)" : "-- (Recomendável: < 50 µg/m³)",
                   Icons.blur_linear,
                   pm10Color,
                 ),
@@ -171,9 +167,7 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
                 _buildLeitura(
                   "Data/Hora UTC",
                   parsedTime != null
-                      ? DateFormat(
-                          "dd/MM/yyyy HH:mm:ss",
-                        ).format(parsedTime.toLocal())
+                      ? DateFormat("dd/MM/yyyy HH:mm:ss").format(parsedTime.toLocal())
                       : "Sem fix GPS",
                   Icons.access_time,
                   Colors.teal,
@@ -191,19 +185,15 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
                             Marker(
                               markerId: const MarkerId("local"),
                               position: LatLng(latitude!, longitude!),
-                              infoWindow: const InfoWindow(
-                                title: "Local da medição",
-                              ),
-                            ),
+                              infoWindow: const InfoWindow(title: "Local da medição"),
+                            )
                           },
                         ),
                       )
                     : const Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Center(
-                          child: Text(
-                            "GPS sem sinal ou fix – localização indisponível.",
-                          ),
+                          child: Text("GPS sem sinal ou fix – localização indisponível."),
                         ),
                       ),
               ],

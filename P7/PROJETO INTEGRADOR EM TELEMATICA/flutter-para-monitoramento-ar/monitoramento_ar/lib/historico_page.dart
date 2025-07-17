@@ -1,4 +1,3 @@
-// historico_page.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -27,7 +26,9 @@ class _HistoricoPageState extends State<HistoricoPage> {
       if (data != null) {
         final Map<String, dynamic> temp = {};
         data.forEach((key, value) {
-          if (value is Map) temp[key.toString()] = Map<String, dynamic>.from(value);
+          if (value is Map) {
+            temp[key.toString()] = Map<String, dynamic>.from(value);
+          }
         });
         setState(() => historico = temp);
       }
@@ -36,14 +37,21 @@ class _HistoricoPageState extends State<HistoricoPage> {
 
   List<MapEntry<String, dynamic>> get filteredList {
     final entries = historico.entries.toList();
-    entries.sort((a, b) => b.key.compareTo(a.key));
+    entries.sort((a, b) {
+      final dtA = DateTime.tryParse(a.value['datetime_utc'] ?? '') ?? DateTime(0);
+      final dtB = DateTime.tryParse(b.value['datetime_utc'] ?? '') ?? DateTime(0);
+      return dtB.compareTo(dtA); // ordem decrescente
+    });
+
     return entries.where((entry) {
       final item = entry.value;
       final dtString = item['datetime_utc'] ?? '';
-      final DateTime? dt = DateTime.tryParse(dtString);
+      final dt = DateTime.tryParse(dtString);
 
       if (selectedDate != null && dt != null) {
-        if (dt.year != selectedDate!.year || dt.month != selectedDate!.month || dt.day != selectedDate!.day) {
+        if (dt.year != selectedDate!.year ||
+            dt.month != selectedDate!.month ||
+            dt.day != selectedDate!.day) {
           return false;
         }
       }
@@ -70,10 +78,14 @@ class _HistoricoPageState extends State<HistoricoPage> {
 
   Color _corQualidade(String qualidade) {
     switch (qualidade) {
-      case 'Bom': return Colors.green;
-      case 'Moderado': return Colors.orange;
-      case 'Ruim': return Colors.red;
-      default: return Colors.grey;
+      case 'Bom':
+        return Colors.green;
+      case 'Moderado':
+        return Colors.orange;
+      case 'Ruim':
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -114,9 +126,29 @@ class _HistoricoPageState extends State<HistoricoPage> {
               initiallyExpanded: selectedKey == key,
               leading: Icon(Icons.circle, color: cor),
               title: Text("PM2.5: ${item['pm2_5']} µg/m³ - $qualidade"),
-              subtitle: dt != null ? Text(DateFormat("dd/MM/yyyy HH:mm:ss").format(dt)) : null,
+              subtitle: dt != null
+                  ? Text(DateFormat("dd/MM/yyyy HH:mm:ss").format(dt))
+                  : const Text("Data inválida"),
               children: [
-                if (selectedKey == key && item['latitude'] != 0.0 && item['longitude'] != 0.0)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("PM1.0: ${item['pm1_0']} µg/m³"),
+                      Text("PM10: ${item['pm10']} µg/m³"),
+                      Text("Latitude: ${item['latitude']}"),
+                      Text("Longitude: ${item['longitude']}"),
+                      Text("Altitude: ${item['altitude']} m"),
+                      Text("UTC: ${item['datetime_utc']}"),
+                    ],
+                  ),
+                ),
+                if (selectedKey == key &&
+                    item['latitude'] != null &&
+                    item['longitude'] != null &&
+                    item['latitude'] != 0.0 &&
+                    item['longitude'] != 0.0)
                   SizedBox(
                     height: 200,
                     child: GoogleMap(
@@ -128,7 +160,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
                         Marker(
                           markerId: const MarkerId("mapaHistorico"),
                           position: LatLng(item['latitude'], item['longitude']),
-                          infoWindow: const InfoWindow(title: "Local da medicao"),
+                          infoWindow: const InfoWindow(title: "Local da medição"),
                         )
                       },
                     ),
