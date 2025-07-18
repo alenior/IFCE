@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 import 'firebase_options.dart';
 import 'historico_page.dart';
@@ -46,6 +47,9 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
   double? altitude;
   String? datetime;
 
+  late Timer _timer;
+  bool _blink = false;
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +71,27 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
         }
       }
     });
+
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      setState(() {
+        _blink = !_blink;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  Color _determineBlinkColor(Color baseColor, Color blinkColor, Duration duration) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if ((now ~/ duration.inMilliseconds) % 2 == 0) {
+      return baseColor;
+    } else {
+      return blinkColor;
+    }
   }
 
   Color _getColorForPM(int? value, int limit) {
@@ -76,15 +101,24 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
     return Colors.green;
   }
 
-  Widget _buildLeitura(String titulo, String valor, IconData icon, Color cor) {
+  Widget _buildLeitura(String titulo, String valor, IconData icon, Color corBase) {
+    Color displayColor = corBase;
+
+    if (corBase == Colors.red) {
+      displayColor = _determineBlinkColor(Colors.white, Colors.red.shade200, const Duration(milliseconds: 500));
+    } else if (corBase == Colors.orange) {
+      displayColor = _determineBlinkColor(Colors.white, Colors.orange.shade200, const Duration(seconds: 2));
+    }
+
     return Card(
+      color: displayColor,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon, color: cor, size: 28),
+            Icon(icon, color: Colors.black, size: 28),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -92,18 +126,16 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
                 children: [
                   Text(
                     titulo,
-                    style: TextStyle(
-                      color: cor,
+                    style: const TextStyle(
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text.rich(
-                    TextSpan(
-                      text: valor,
-                    ),
-                    style: TextStyle(color: cor, fontSize: 14),
+                  Text(
+                    valor,
+                    style: const TextStyle(color: Colors.black, fontSize: 14),
                   ),
                 ],
               ),

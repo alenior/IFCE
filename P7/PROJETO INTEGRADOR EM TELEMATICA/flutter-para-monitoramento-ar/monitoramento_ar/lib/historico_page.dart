@@ -122,50 +122,56 @@ class _HistoricoPageState extends State<HistoricoPage> {
           return Card(
             margin: const EdgeInsets.all(8),
             child: ExpansionTile(
-              onExpansionChanged: (expanded) => setState(() => selectedKey = expanded ? key : null),
+              key: Key(key), // chave única para reconstrução
+              onExpansionChanged: (expanded) {
+                setState(() {
+                  selectedKey = expanded ? key : null;
+                });
+              },
               initiallyExpanded: selectedKey == key,
               leading: Icon(Icons.circle, color: cor),
               title: Text("PM2.5: ${item['pm2_5']} µg/m³ - $qualidade"),
               subtitle: dt != null
                   ? Text(DateFormat("dd/MM/yyyy HH:mm:ss").format(dt))
                   : const Text("Data inválida"),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("PM1.0: ${item['pm1_0']} µg/m³"),
-                      Text("PM10: ${item['pm10']} µg/m³"),
-                      Text("Latitude: ${item['latitude']}"),
-                      Text("Longitude: ${item['longitude']}"),
-                      Text("Altitude: ${item['altitude']} m"),
-                      Text("UTC: ${item['datetime_utc']}"),
-                    ],
-                  ),
-                ),
-                if (selectedKey == key &&
-                    item['latitude'] != null &&
-                    item['longitude'] != null &&
-                    item['latitude'] != 0.0 &&
-                    item['longitude'] != 0.0)
-                  SizedBox(
-                    height: 200,
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(item['latitude'], item['longitude']),
-                        zoom: 15,
+              children: selectedKey == key
+                  ? [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("PM1.0: ${item['pm1_0']} µg/m³"),
+                            Text("PM10: ${item['pm10']} µg/m³"),
+                            Text("Latitude: ${item['latitude']}"),
+                            Text("Longitude: ${item['longitude']}"),
+                            Text("Altitude: ${item['altitude']} m"),
+                            Text("UTC: ${item['datetime_utc']}"),
+                          ],
+                        ),
                       ),
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId("mapaHistorico"),
-                          position: LatLng(item['latitude'], item['longitude']),
-                          infoWindow: const InfoWindow(title: "Local da medição"),
-                        )
-                      },
-                    ),
-                  ),
-              ],
+                      if (item['latitude'] != null &&
+                          item['longitude'] != null &&
+                          item['latitude'] != 0.0 &&
+                          item['longitude'] != 0.0)
+                        SizedBox(
+                          height: 200,
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(item['latitude'], item['longitude']),
+                              zoom: 15,
+                            ),
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId("mapaHistorico"),
+                                position: LatLng(item['latitude'], item['longitude']),
+                                infoWindow: const InfoWindow(title: "Local da medição"),
+                              )
+                            },
+                          ),
+                        ),
+                    ]
+                  : [],
             ),
           );
         },
