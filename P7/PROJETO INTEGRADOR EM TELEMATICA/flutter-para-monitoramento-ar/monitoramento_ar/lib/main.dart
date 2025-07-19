@@ -1,30 +1,27 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'dart:async';
-
-import 'firebase_options.dart';
 import 'historico_page.dart';
+import 'geocoding_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MonitoramentoArApp());
+  await Firebase.initializeApp();
+  runApp(const MyApp());
 }
 
-class MonitoramentoArApp extends StatelessWidget {
-  const MonitoramentoArApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Qualidade do Ar',
-      theme: ThemeData(primarySwatch: Colors.teal),
+      title: 'Monitoramento do Ar',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: const LeituraSensorPage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -37,45 +34,77 @@ class LeituraSensorPage extends StatefulWidget {
 }
 
 class _LeituraSensorPageState extends State<LeituraSensorPage> {
-  final DatabaseReference _historicoRef = FirebaseDatabase.instance.ref("historico");
+  final _historicoRef = FirebaseDatabase.instance.ref('leituras');
 
-  int? pm1_0;
-  int? pm2_5;
-  int? pm10;
-  double? latitude;
-  double? longitude;
-  double? altitude;
-  String? datetime;
+  int pm1_0 = 0;
+  int pm2_5 = 0;
+  int pm10 = 0;
+  double latitude = 0;
+  double longitude = 0;
+  double altitude = 0;
+  String datetime = "--";
+  String? placeName;
+
+  Color getStatusColor(String status) {
+    switch (status) {
+      case "Ruim":
+        return Colors.red;
+      case "Moderado":
+        return Colors.yellow;
+      default:
+        return Colors.green;
+    }
+  }
+
+  String classificarQualidadeComposta() {
+    int score = 0;
+    if (pm1_0 > 0) score++;
+    if (pm1_0 > 10) score++;
+    if (pm2_5 > 15) score++;
+    if (pm2_5 > 50) score++;
+    if (pm10 > 50) score++;
+    if (pm10 > 100) score++;
+    if (score <= 1) return "Bom";
+    if (score <= 3) return "Moderado";
+    return "Ruim";
+  }
 
   late Timer _timer;
-  bool _blink = false;
+  bool _toggleColor = false;
 
   @override
   void initState() {
     super.initState();
-    _historicoRef.orderByKey().limitToLast(1).onValue.listen((event) {
+
+    _historicoRef.orderByKey().limitToLast(1).onValue.listen((event) async {
       final children = event.snapshot.children;
       if (children.isNotEmpty) {
         final lastSnapshot = children.last;
         final data = lastSnapshot.value as Map<dynamic, dynamic>?;
         if (data != null) {
+          final lat = (data['latitude'] ?? 0.0).toDouble();
+          final lon = (data['longitude'] ?? 0.0).toDouble();
+          String? place;
+          if (lat != 0.0 && lon != 0.0) {
+            place = await GeocodingService.getPlaceName(lat, lon);
+          }
+
           setState(() {
             pm1_0 = data['pm1_0'];
             pm2_5 = data['pm2_5'];
             pm10 = data['pm10'];
-            latitude = (data['latitude'] ?? 0.0).toDouble();
-            longitude = (data['longitude'] ?? 0.0).toDouble();
+            latitude = lat;
+            longitude = lon;
             altitude = (data['altitude'] ?? 0.0).toDouble();
             datetime = data['datetime_utc'];
+            placeName = place;
           });
         }
       }
     });
 
     _timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      setState(() {
-        _blink = !_blink;
-      });
+      setState(() => _toggleColor = !_toggleColor);
     });
   }
 
@@ -85,76 +114,28 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
     super.dispose();
   }
 
-  Color _determineBlinkColor(Color baseColor, Color blinkColor, Duration duration) {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    if ((now ~/ duration.inMilliseconds) % 2 == 0) {
-      return baseColor;
-    } else {
-      return blinkColor;
-    }
-  }
-
-  Color _getColorForPM(int? value, int limit) {
-    if (value == null) return Colors.black;
-    if (value > limit) return Colors.red;
-    if (value > limit / 2) return Colors.orange;
-    return Colors.green;
-  }
-
-  Widget _buildLeitura(String titulo, String valor, IconData icon, Color corBase) {
-    Color displayColor = corBase;
-
-    if (corBase == Colors.red) {
-      displayColor = _determineBlinkColor(Colors.white, Colors.red.shade200, const Duration(milliseconds: 500));
-    } else if (corBase == Colors.orange) {
-      displayColor = _determineBlinkColor(Colors.white, Colors.orange.shade200, const Duration(seconds: 2));
-    }
-
+  Widget _buildLeitura(String titulo, String valor, IconData icone, Color cor) {
     return Card(
-      color: displayColor,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.black, size: 28),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    titulo,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    valor,
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      elevation: 4,
+      color: cor,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: ListTile(
+        leading: Icon(icone, size: 32, color: Colors.black),
+        title: Text(titulo, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        subtitle: Text(valor, style: const TextStyle(color: Colors.black)),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final hasData = pm1_0 != null || pm2_5 != null || pm10 != null;
-    final hasFix = latitude != null && longitude != null && latitude != 0.0 && longitude != 0.0;
-    final DateTime? parsedTime = DateTime.tryParse(datetime ?? "");
-
-    final pm1Color = _getColorForPM(pm1_0, 0);
-    final pm25Color = _getColorForPM(pm2_5, 15);
-    final pm10Color = _getColorForPM(pm10, 50);
+    final status = classificarQualidadeComposta();
+    final statusColor = getStatusColor(status);
+    final dynamicColor = (status == "Ruim" && _toggleColor)
+        ? Colors.red.shade900
+        : (status == "Moderado" && _toggleColor)
+            ? Colors.yellow.shade700
+            : statusColor;
 
     return Scaffold(
       appBar: AppBar(
@@ -166,71 +147,22 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
               context,
               MaterialPageRoute(builder: (_) => const HistoricoPage()),
             ),
-          ),
+          )
         ],
       ),
-      body: hasData
-          ? ListView(
-              children: [
-                _buildLeitura(
-                  "PM1.0",
-                  pm1_0 != null ? "$pm1_0 µg/m³ (Recomendável: 0 µg/m³)" : "-- (Recomendável: 0 µg/m³)",
-                  Icons.blur_on,
-                  pm1Color,
-                ),
-                _buildLeitura(
-                  "PM2.5",
-                  pm2_5 != null ? "$pm2_5 µg/m³ (Recomendável: < 15 µg/m³)" : "-- (Recomendável: < 15 µg/m³)",
-                  Icons.blur_circular,
-                  pm25Color,
-                ),
-                _buildLeitura(
-                  "PM10",
-                  pm10 != null ? "$pm10 µg/m³ (Recomendável: < 50 µg/m³)" : "-- (Recomendável: < 50 µg/m³)",
-                  Icons.blur_linear,
-                  pm10Color,
-                ),
-                _buildLeitura(
-                  "Altitude",
-                  altitude != null ? "${altitude!.toStringAsFixed(2)} m" : "--",
-                  Icons.terrain,
-                  Colors.blueGrey,
-                ),
-                _buildLeitura(
-                  "Data/Hora UTC",
-                  parsedTime != null
-                      ? DateFormat("dd/MM/yyyy HH:mm:ss").format(parsedTime.toLocal())
-                      : "Sem fix GPS",
-                  Icons.access_time,
-                  Colors.teal,
-                ),
-                const SizedBox(height: 16),
-                hasFix
-                    ? SizedBox(
-                        height: 300,
-                        child: GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(latitude!, longitude!),
-                            zoom: 15,
-                          ),
-                          markers: {
-                            Marker(
-                              markerId: const MarkerId("local"),
-                              position: LatLng(latitude!, longitude!),
-                              infoWindow: const InfoWindow(title: "Local da medição"),
-                            )
-                          },
-                        ),
-                      )
-                    : const Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: Center(
-                          child: Text("GPS sem sinal ou fix – localização indisponível."),
-                        ),
-                      ),
-              ],
-            )
-          : const Center(child: CircularProgressIndicator()),
+      body: ListView(
+        children: [
+          _buildLeitura("PM1.0", "$pm1_0 µg/m³", Icons.blur_on, Colors.cyan.shade100),
+          _buildLeitura("PM2.5", "$pm2_5 µg/m³", Icons.blur_circular, Colors.orange.shade100),
+          _buildLeitura("PM10", "$pm10 µg/m³", Icons.blur_linear, Colors.purple.shade100),
+          _buildLeitura("Qualidade do Ar", status, Icons.speed, dynamicColor),
+          _buildLeitura("Latitude", "$latitude", Icons.my_location, Colors.grey.shade200),
+          _buildLeitura("Longitude", "$longitude", Icons.location_on, Colors.grey.shade200),
+          _buildLeitura("Altitude", "$altitude m", Icons.signal_cellular_alt, Colors.teal.shade100),
+          _buildLeitura("Local aproximado", placeName ?? "--", Icons.place, Colors.purple.shade200),
+          _buildLeitura("Data/Hora UTC", datetime, Icons.access_time, Colors.grey.shade300),
+        ],
+      ),
     );
   }
 }
