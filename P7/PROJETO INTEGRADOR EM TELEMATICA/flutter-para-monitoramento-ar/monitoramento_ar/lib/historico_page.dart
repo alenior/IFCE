@@ -15,7 +15,8 @@ class _HistoricoPageState extends State<HistoricoPage> {
 
   Map<String, dynamic> historico = {};
   String? selectedKey;
-  DateTime? selectedDate;
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
   String qualidadeFiltro = 'Todos';
 
   @override
@@ -38,20 +39,22 @@ class _HistoricoPageState extends State<HistoricoPage> {
   List<MapEntry<String, dynamic>> get filteredList {
     final entries = historico.entries.toList();
     entries.sort((a, b) {
-      final dtA = DateTime.tryParse(a.value['datetime_utc'] ?? '') ?? DateTime(0);
-      final dtB = DateTime.tryParse(b.value['datetime_utc'] ?? '') ?? DateTime(0);
+      final dtA = DateTime.tryParse(a.value['datetime_utc'] ?? '')?.toLocal() ?? DateTime(0);
+      final dtB = DateTime.tryParse(b.value['datetime_utc'] ?? '')?.toLocal() ?? DateTime(0);
       return dtB.compareTo(dtA); // ordem decrescente
     });
 
     return entries.where((entry) {
       final item = entry.value;
       final dtString = item['datetime_utc'] ?? '';
-      final dt = DateTime.tryParse(dtString);
+      final dt = DateTime.tryParse(dtString)?.toLocal();
 
-      if (selectedDate != null && dt != null) {
-        if (dt.year != selectedDate!.year ||
-            dt.month != selectedDate!.month ||
-            dt.day != selectedDate!.day) {
+      if (dt == null) return false;
+
+      if (selectedStartDate != null && selectedEndDate != null) {
+        final inicio = DateTime(selectedStartDate!.year, selectedStartDate!.month, selectedStartDate!.day);
+        final fim = DateTime(selectedEndDate!.year, selectedEndDate!.month, selectedEndDate!.day, 23, 59, 59);
+        if (dt.isBefore(inicio) || dt.isAfter(fim)) {
           return false;
         }
       }
@@ -65,15 +68,33 @@ class _HistoricoPageState extends State<HistoricoPage> {
     }).toList();
   }
 
-  void _selecionarData() async {
+  void _selecionarPeriodo() async {
     final DateTime now = DateTime.now();
-    final DateTime? picked = await showDatePicker(
+
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: selectedDate ?? now,
+      initialDateRange: (selectedStartDate != null && selectedEndDate != null)
+          ? DateTimeRange(start: selectedStartDate!, end: selectedEndDate!)
+          : null,
       firstDate: DateTime(2024),
       lastDate: now,
+      helpText: 'Selecionar intervalo de datas',
     );
-    if (picked != null) setState(() => selectedDate = picked);
+
+    if (picked != null) {
+      setState(() {
+        selectedStartDate = picked.start;
+        selectedEndDate = picked.end;
+      });
+    }
+  }
+
+  void _limparFiltros() {
+    setState(() {
+      selectedStartDate = null;
+      selectedEndDate = null;
+      qualidadeFiltro = 'Todos';
+    });
   }
 
   Color _corQualidade(String qualidade) {
@@ -89,16 +110,40 @@ class _HistoricoPageState extends State<HistoricoPage> {
     }
   }
 
+  String _formatarDataPeriodo() {
+    if (historico.isEmpty) return "Sem registros";
+
+    List<DateTime> datas = historico.values.map((e) {
+      final dt = DateTime.tryParse(e['datetime_utc'] ?? '')?.toLocal();
+      return dt ?? DateTime(0);
+    }).where((dt) => dt.year > 2020).toList();
+
+    if (datas.isEmpty) return "Sem registros";
+
+    datas.sort();
+    final df = DateFormat('dd/MM/yyyy');
+
+    if (selectedStartDate != null && selectedEndDate != null) {
+      return "${df.format(selectedStartDate!)} a ${df.format(selectedEndDate!)}";
+    } else {
+      return "${df.format(datas.first)} a ${df.format(datas.last)}";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Histórico de Leituras"),
         actions: [
+          TextButton(
+            onPressed: _limparFiltros,
+            child: const Text("Limpar filtros", style: TextStyle(color: Color.fromARGB(255, 24, 19, 19))),
+          ),
           IconButton(
             icon: const Icon(Icons.date_range),
-            onPressed: _selecionarData,
-            tooltip: 'Filtrar por data',
+            onPressed: _selecionarPeriodo,
+            tooltip: 'Filtrar por período',
           ),
           DropdownButton<String>(
             value: qualidadeFiltro,
@@ -109,33 +154,37 @@ class _HistoricoPageState extends State<HistoricoPage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: filteredList.length,
-        itemBuilder: (context, index) {
-          final entry = filteredList[index];
-          final item = entry.value;
-          final key = entry.key;
-          final qualidade = item['qualidade'] ?? 'Desconhecida';
-          final cor = _corQualidade(qualidade);
-          final dt = DateTime.tryParse(item['datetime_utc'] ?? '')?.toLocal();
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              "Período: ${_formatarDataPeriodo()}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredList.length,
+              itemBuilder: (context, index) {
+                final entry = filteredList[index];
+                final item = entry.value;
+                final key = entry.key;
+                final qualidade = item['qualidade'] ?? 'Desconhecida';
+                final cor = _corQualidade(qualidade);
+                final dt = DateTime.tryParse(item['datetime_utc'] ?? '')?.toLocal();
 
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ExpansionTile(
-              key: Key(key), // chave única para reconstrução
-              onExpansionChanged: (expanded) {
-                setState(() {
-                  selectedKey = expanded ? key : null;
-                });
-              },
-              initiallyExpanded: selectedKey == key,
-              leading: Icon(Icons.circle, color: cor),
-              title: Text("PM2.5: ${item['pm2_5']} µg/m³ - $qualidade"),
-              subtitle: dt != null
-                  ? Text(DateFormat("dd/MM/yyyy HH:mm:ss").format(dt))
-                  : const Text("Data inválida"),
-              children: selectedKey == key
-                  ? [
+                return Card(
+                  margin: const EdgeInsets.all(8),
+                  child: ExpansionTile(
+                    onExpansionChanged: (expanded) => setState(() => selectedKey = expanded ? key : null),
+                    initiallyExpanded: selectedKey == key,
+                    leading: Icon(Icons.circle, color: cor),
+                    title: Text("PM2.5: ${item['pm2_5']} µg/m³ - $qualidade"),
+                    subtitle: dt != null
+                        ? Text(DateFormat("dd/MM/yyyy HH:mm:ss").format(dt))
+                        : const Text("Data inválida"),
+                    children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Column(
@@ -150,7 +199,8 @@ class _HistoricoPageState extends State<HistoricoPage> {
                           ],
                         ),
                       ),
-                      if (item['latitude'] != null &&
+                      if (selectedKey == key &&
+                          item['latitude'] != null &&
                           item['longitude'] != null &&
                           item['latitude'] != 0.0 &&
                           item['longitude'] != 0.0)
@@ -170,11 +220,13 @@ class _HistoricoPageState extends State<HistoricoPage> {
                             },
                           ),
                         ),
-                    ]
-                  : [],
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
