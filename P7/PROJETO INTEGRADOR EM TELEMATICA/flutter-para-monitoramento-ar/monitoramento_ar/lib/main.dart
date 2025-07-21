@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'dart:async';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'firebase_options.dart';
 import 'historico_page.dart';
-import 'geocoding_service.dart';
+import 'widgets/info_card.dart';
+import 'services/reverse_geocoding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -17,125 +19,124 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Monitoramento do Ar',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LeituraSensorPage(),
+      title: 'Monitoramento da Qualidade do Ar',
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
+      debugShowCheckedModeBanner: false,
+      home: const MonitoramentoPage(),
     );
   }
 }
 
-class LeituraSensorPage extends StatefulWidget {
-  const LeituraSensorPage({super.key});
+class MonitoramentoPage extends StatefulWidget {
+  const MonitoramentoPage({super.key});
 
   @override
-  State<LeituraSensorPage> createState() => _LeituraSensorPageState();
+  State<MonitoramentoPage> createState() => _MonitoramentoPageState();
 }
 
-class _LeituraSensorPageState extends State<LeituraSensorPage> {
-  final _historicoRef = FirebaseDatabase.instance.ref('leituras');
-
-  int pm1_0 = 0;
-  int pm2_5 = 0;
-  int pm10 = 0;
-  double latitude = 0;
-  double longitude = 0;
-  double altitude = 0;
-  String datetime = "--";
-  String? placeName;
-
-  Color getStatusColor(String status) {
-    switch (status) {
-      case "Ruim":
-        return Colors.red;
-      case "Moderado":
-        return Colors.yellow;
-      default:
-        return Colors.green;
-    }
-  }
-
-  String classificarQualidadeComposta() {
-    int score = 0;
-    if (pm1_0 > 0) score++;
-    if (pm1_0 > 10) score++;
-    if (pm2_5 > 15) score++;
-    if (pm2_5 > 50) score++;
-    if (pm10 > 50) score++;
-    if (pm10 > 100) score++;
-    if (score <= 1) return "Bom";
-    if (score <= 3) return "Moderado";
-    return "Ruim";
-  }
-
-  late Timer _timer;
-  bool _toggleColor = false;
+class _MonitoramentoPageState extends State<MonitoramentoPage> {
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
+  Map<String, dynamic> dados = {};
+  String nomeLocal = '';
+  GoogleMapController? _mapController;
+  LatLng? _localizacao;
 
   @override
   void initState() {
     super.initState();
-
-    _historicoRef.orderByKey().limitToLast(1).onValue.listen((event) async {
-      final children = event.snapshot.children;
-      if (children.isNotEmpty) {
-        final lastSnapshot = children.last;
-        final data = lastSnapshot.value as Map<dynamic, dynamic>?;
-        if (data != null) {
-          final lat = (data['latitude'] ?? 0.0).toDouble();
-          final lon = (data['longitude'] ?? 0.0).toDouble();
-          String? place;
-          if (lat != 0.0 && lon != 0.0) {
-            place = await GeocodingService.getPlaceName(lat, lon);
-          }
-
-          setState(() {
-            pm1_0 = data['pm1_0'];
-            pm2_5 = data['pm2_5'];
-            pm10 = data['pm10'];
-            latitude = lat;
-            longitude = lon;
-            altitude = (data['altitude'] ?? 0.0).toDouble();
-            datetime = data['datetime_utc'];
-            placeName = place;
-          });
-        }
-      }
-    });
-
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      setState(() => _toggleColor = !_toggleColor);
+    _dbRef.child('dados').orderByKey().limitToLast(1).onChildAdded.listen((event) {
+      final novo = Map<String, dynamic>.from(event.snapshot.value as Map);
+      setState(() {
+        dados = novo;
+        _localizacao = LatLng(
+          double.tryParse(novo['latitude'].toString()) ?? 0,
+          double.tryParse(novo['longitude'].toString()) ?? 0,
+        );
+        _buscarNomeLocal();
+      });
     });
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
+  Future<void> _buscarNomeLocal() async {
+    if (_localizacao == null) return;
+    final nome = await GeocodingService.getPlaceName(_localizacao!.latitude, _localizacao!.longitude);
+    setState(() => nomeLocal = nome ?? 'Não identificado');
+
   }
 
-  Widget _buildLeitura(String titulo, String valor, IconData icone, Color cor) {
-    return Card(
-      elevation: 4,
-      color: cor,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: ListTile(
-        leading: Icon(icone, size: 32, color: Colors.black),
-        title: Text(titulo, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        subtitle: Text(valor, style: const TextStyle(color: Colors.black)),
+  Color _corPM(double valor, double limite) {
+    if (valor <= limite) return Colors.green;
+    if (valor <= limite * 1.5) return Colors.orange;
+    return Colors.red;
+  }
+
+  Widget _buildMapa() {
+    if (_localizacao == null) return const SizedBox(height: 200, child: Center(child: CircularProgressIndicator()));
+
+    final marcador = Marker(
+      markerId: const MarkerId('local'),
+      position: _localizacao!,
+    );
+
+    return SizedBox(
+      height: 300,
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(target: _localizacao!, zoom: 17),
+        markers: {marcador},
+        onMapCreated: (controller) => _mapController = controller,
+        myLocationButtonEnabled: false,
+        zoomControlsEnabled: true,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final status = classificarQualidadeComposta();
-    final statusColor = getStatusColor(status);
-    final dynamicColor = (status == "Ruim" && _toggleColor)
-        ? Colors.red.shade900
-        : (status == "Moderado" && _toggleColor)
-            ? Colors.yellow.shade700
-            : statusColor;
+    final pm1 = double.tryParse(dados['pm1_0']?.toString() ?? '') ?? 0;
+    final pm2_5 = double.tryParse(dados['pm2_5']?.toString() ?? '') ?? 0;
+    final pm10 = double.tryParse(dados['pm10']?.toString() ?? '') ?? 0;
+    final altitude = double.tryParse(dados['altitude']?.toString() ?? '') ?? 0;
+    final dataUtc = dados['utc'] ?? '';
+
+    final pmCards = [
+      InfoCard(
+        titulo: 'PM1.0',
+        valor: '$pm1 µg/m³ (Recomendável: 0 µg/m³)',
+        cor: Colors.white,
+        icone: Icons.blur_on,
+        textoCor: Colors.black,
+      ),
+      InfoCard(
+        titulo: 'PM2.5',
+        valor: '$pm2_5 µg/m³ (Recomendável: < 15 µg/m³)',
+        cor: _corPM(pm2_5, 15),
+        icone: Icons.blur_circular,
+      ),
+      InfoCard(
+        titulo: 'PM10',
+        valor: '$pm10 µg/m³ (Recomendável: < 50 µg/m³)',
+        cor: _corPM(pm10, 50),
+        icone: Icons.grid_view_rounded,
+      ),
+      InfoCard(
+        titulo: 'Altitude',
+        valor: '${altitude.toStringAsFixed(2)} m',
+        cor: Colors.blueGrey,
+        icone: Icons.terrain,
+      ),
+      InfoCard(
+        titulo: 'Data/Hora UTC',
+        valor: dataUtc,
+        cor: Colors.teal,
+        icone: Icons.access_time,
+      ),
+      InfoCard(
+        titulo: 'Local Aproximado',
+        valor: nomeLocal,
+        cor: Colors.purple,
+        icone: Icons.place,
+      ),
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -147,21 +148,22 @@ class _LeituraSensorPageState extends State<LeituraSensorPage> {
               context,
               MaterialPageRoute(builder: (_) => const HistoricoPage()),
             ),
-          )
+          ),
         ],
       ),
-      body: ListView(
-        children: [
-          _buildLeitura("PM1.0", "$pm1_0 µg/m³", Icons.blur_on, Colors.cyan.shade100),
-          _buildLeitura("PM2.5", "$pm2_5 µg/m³", Icons.blur_circular, Colors.orange.shade100),
-          _buildLeitura("PM10", "$pm10 µg/m³", Icons.blur_linear, Colors.purple.shade100),
-          _buildLeitura("Qualidade do Ar", status, Icons.speed, dynamicColor),
-          _buildLeitura("Latitude", "$latitude", Icons.my_location, Colors.grey.shade200),
-          _buildLeitura("Longitude", "$longitude", Icons.location_on, Colors.grey.shade200),
-          _buildLeitura("Altitude", "$altitude m", Icons.signal_cellular_alt, Colors.teal.shade100),
-          _buildLeitura("Local aproximado", placeName ?? "--", Icons.place, Colors.purple.shade200),
-          _buildLeitura("Data/Hora UTC", datetime, Icons.access_time, Colors.grey.shade300),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                ...pmCards,
+                const SizedBox(height: 16),
+                _buildMapa(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
-import 'geocoding_service.dart';
+import 'services/reverse_geocoding.dart';
 
 class HistoricoPage extends StatefulWidget {
   const HistoricoPage({super.key});
@@ -129,7 +129,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
                     item['longitude']?.toDouble() ?? 0.0,
                   ),
                   builder: (context, snapshot) {
-                    final local = snapshot.data ?? "--";
+                    final String local = snapshot.data ?? "--";
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Column(
